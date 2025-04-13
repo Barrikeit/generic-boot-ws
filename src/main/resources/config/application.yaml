@@ -1,0 +1,17 @@
+application:
+  name: generic
+  version: 0.0.1
+
+server:
+  port: 9891
+  servlet:
+    context-path: /generic
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      force-response: true
+
+spring:
+  application.name: generic-ws
+  mvc.servlet.path: /api/v1
