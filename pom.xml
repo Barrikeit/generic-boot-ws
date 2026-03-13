@@ -4,38 +4,66 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.barrikeit</groupId>
+    <groupId>dev.barrikeit</groupId>
     <artifactId>generic-boot-ws</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
     <packaging>war</packaging>
 
     <properties>
-        <app.version>0.0.1</app.version>
-        <java.version>17</java.version>
+        <!-- Project -->
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss</maven.build.timestamp.format>
+        <banner.name>${app.name}</banner.name>
+        <banner.version>${app.version}</banner.version>
+        <banner.build>${app.build}</banner.build>
 
-        <spring-boot.version>3.4.0</spring-boot.version>
-        <spring.version>6.2.0</spring.version>
+        <!-- Spring -->
+        <spring-boot.version>3.4.1</spring-boot.version>
+        <spring-doc.version>2.6.0</spring-doc.version>
+
+        <!-- Security -->
+        <jwt.version>0.13.0</jwt.version>
+
+        <!-- Logs -->
+        <log4j2.version>2.25.3</log4j2.version>
+
+        <!-- Lombok / MapStruct -->
         <lombok.version>1.18.34</lombok.version>
-        <log4j-slf4j2.version>2.23.1</log4j-slf4j2.version>
         <mapstruct.version>1.6.2</mapstruct.version>
-        <jackson.version>2.18.0</jackson.version>
+        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 
-        <maven-compiler.version>3.8.1</maven-compiler.version>
-        <maven-war.version>3.4.0</maven-war.version>
-        <maven-resources.version>3.2.0</maven-resources.version>
+        <!-- Database drivers -->
+        <postgresql.version>42.7.7</postgresql.version>
+
+        <!-- plugins -->
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-war-plugin.version>3.5.0</maven-war-plugin.version>
+        <maven-build-metadata-plugin.version>1.0.0</maven-build-metadata-plugin.version>
+        <maven-resources-plugin.version>3.4.0</maven-resources-plugin.version>
+        <spring-banner-plugin.version>1.6.0</spring-banner-plugin.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-        <!-- Spring Boot -->
+        <!-- Web - needed for HTTP upgrade handshake -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <version>${spring-boot.version}</version>
+            <artifactId>spring-boot-starter-web</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -43,64 +71,58 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
+
+        <!-- WebSocket + STOMP -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
+
+        <!-- Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Logs -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-        <!-- Spring -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-messaging</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.messaging</groupId>
-            <artifactId>spring-messaging</artifactId>
-            <version>${spring.version}</version>
         </dependency>
 
-        <!-- Lombok y Logs -->
+        <!-- SpringDoc - documents the HTTP handshake endpoint -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${spring-doc.version}</version>
+        </dependency>
+
+        <!-- JWT - token validation -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Lombok / Mapstruct -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -108,149 +130,66 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j-slf4j2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-            <version>${log4j-slf4j2.version}</version>
-        </dependency>
-
-        <!-- Mappers -->
-        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
 
-        <!-- XML, YAML Files -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator.version}</version>
-        </dependency>
-
-        <!-- Driver JDBC (H2, PostgresSQL) -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- Driver JDBC (PostgreSQL, H2) -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
         </dependency>
-
-        <!-- Hikari pool para manejar el pool de conexiones a la bbdd-->
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>${hikari.version}</version>
-        </dependency>
-
-        <!-- Flyway migraciones de la bbdd -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
-            <version>${flyway.version}</version>
-        </dependency>
-
-        <!-- Jsoup -->
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>${jsoup.version}</version>
-        </dependency>
-
-        <!-- XML, YAML Files -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <!-- Dependencia commons-io para leer, escribir y modificar archivos y carpetas (FileUtils.)-->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-        </dependency>
-
-        <!-- Dependencia poi para leer, escribir y modificar archivos Microsoft Office (.xls/.xlsx, .doc/.docx, .ppt) -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>${apache-poi.version}</version>
-        </dependency>
-        <!-- Dependencia poi-ooxml aumenta la covertura de poi para archivos Microsoft Office (.xlsx, .docx) -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${apache-poi.version}</version>
-        </dependency>
-
-        <!-- Dependencia jackcess para leer, escribir y modificar archivos Access (.accdb)-->
-        <dependency>
-            <groupId>com.healthmarketscience.jackcess</groupId>
-            <artifactId>jackcess</artifactId>
-            <version>${jackcess.version}</version>
-        </dependency>
-
-        <!-- Tomcat -->
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <version>${tomcat.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-websocket</artifactId>
-            <version>${tomcat.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-            <version>3.4.0</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>generic</finalName>
+        <finalName>generic-ws</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
+            <!-- compiler-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler.version}</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>${lombok-mapstruct-binding.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <compilerArg>-Amapstruct.verbose=true</compilerArg>
+                        <compilerArg>-Amapstruct.defaultComponentModel=spring</compilerArg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <!-- war plugins -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>${maven-war.version}</version>
+                <version>${maven-war-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>default-war</id>
@@ -266,27 +205,93 @@
                     <outputDirectory>dist</outputDirectory>
                 </configuration>
             </plugin>
-            <!-- Maven Resources Plugin to filter files -->
+            <!-- build metadata plugin -->
+            <plugin>
+                <groupId>dev.barrikeit.maven</groupId>
+                <artifactId>build-metadata-maven-plugin</artifactId>
+                <version>${maven-build-metadata-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-build-metadata</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>generate-build-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Optional overrides -->
+                    <appName>${project.build.finalName}</appName>
+                    <appVersion>${project.version}</appVersion>
+
+                    <!-- Property names -->
+                    <buildIdProperty>app.build</buildIdProperty>
+                    <buildTimestampProperty>app.buildTime</buildTimestampProperty>
+                    <appNameProperty>app.name</appNameProperty>
+                    <appVersionProperty>app.version</appVersionProperty>
+
+                    <!-- Format options -->
+                    <buildIdLength>20</buildIdLength>
+                    <buildTimestampFormat>${maven.build.timestamp.format}</buildTimestampFormat>
+
+                    <!-- Output file -->
+                    <generateFile>true</generateFile>
+                    <fileDirectory>${project.build.directory}/generated-sources/build-metadata</fileDirectory>
+                    <fileName>build.properties</fileName>
+                </configuration>
+            </plugin>
+            <!-- filter resources plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources.version}</version>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>filter-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
+                    <filters>
+                        <filter>${project.build.directory}/generated-sources/build-metadata/build.properties</filter>
+                    </filters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
                     <delimiters>
                         <delimiter>@</delimiter>
                     </delimiters>
-                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                    <resources>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <filtering>true</filtering>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+            <!-- generate banner plugin -->
+            <plugin>
+                <groupId>ch.acanda.maven</groupId>
+                <artifactId>spring-banner-plugin</artifactId>
+                <version>${spring-banner-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-spring-banner</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <text>${banner.name}</text>
+                    <info>Version: ${banner.version} (${banner.build})</info>
+                    <font>standard</font>
+                    <color>default</color>
                 </configuration>
             </plugin>
         </plugins>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <targetPath>${project.build.directory}/classes</targetPath>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
 
     <profiles>
@@ -294,21 +299,14 @@
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
-                <jdk>${java.version}</jdk>
             </activation>
             <properties>
-                <maven.compiler.source>${java.version}</maven.compiler.source>
-                <maven.compiler.target>${java.version}</maven.compiler.target>
-                <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-                <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-                <resource.delimiter>@</resource.delimiter>
+                <spring.profiles.active>default</spring.profiles.active>
             </properties>
         </profile>
         <profile>
             <id>dev</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
                 <property>
                     <name>env</name>
                     <value>dev</value>
@@ -319,15 +317,15 @@
             </properties>
         </profile>
         <profile>
-            <id>test</id>
+            <id>prod</id>
             <activation>
                 <property>
                     <name>env</name>
-                    <value>test</value>
+                    <value>prod</value>
                 </property>
             </activation>
             <properties>
-                <spring.profiles.active>test</spring.profiles.active>
+                <spring.profiles.active>prod</spring.profiles.active>
             </properties>
         </profile>
     </profiles>

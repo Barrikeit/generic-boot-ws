@@ -1,11 +1,15 @@
 application:
-  name: generic
-  version: 0.0.1
+  name: @app.name@
+  version: @app.version@
+  build: @app.build@
+  buildTime: @app.buildTime@
 
 server:
-  port: 9891
+  port: 9892
+  timeZone: Europe/Madrid
   servlet:
-    context-path: /generic
+    context-path: /
+    api-path: /api/v1
     encoding:
       charset: UTF-8
       enabled: true
@@ -13,5 +17,29 @@ server:
       force-response: true
 
 spring:
-  application.name: generic-ws
-  mvc.servlet.path: /api/v1
+  application.name: @app.name@
+  profiles:
+    active: @spring.profiles.active@
+  config:
+    import:
+      - application-base.yaml
+      - application-flyway.yaml
+      - application-security.yaml
+      - optional:application-@spring.profiles.active@.yaml
+
+logging:
+  file:
+    path: dist/logs
+
+springdoc:
+  api-docs.path: /public/api-docs
+  packagesToScan: dev.barrikeit.rest
+  show-actuator: false
+  swagger-ui:
+    display-request-duration: true
+    filter: true
+    operations-sorter: method
+    path: /public/swagger-ui
+    use-root-path: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
