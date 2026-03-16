@@ -38,9 +38,20 @@
 
         <!-- Database drivers -->
         <postgresql.version>42.7.7</postgresql.version>
+        <h2.version>2.3.232</h2.version>
 
+        <!-- Utils / IO -->
+        <jsoup.version>1.18.1</jsoup.version>
+        <commons-io.version>2.18.0</commons-io.version>
+        <apache-poi.version>5.4.0</apache-poi.version>
+        <jackcess.version>4.0.7</jackcess.version>
+        <pdfbox.version>3.0.3</pdfbox.version>
+
+        <!-- dependencias solo de plugins -->
+        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <!-- plugins -->
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-war-plugin.version>3.5.0</maven-war-plugin.version>
         <maven-build-metadata-plugin.version>1.0.0</maven-build-metadata-plugin.version>
         <maven-resources-plugin.version>3.4.0</maven-resources-plugin.version>
@@ -60,7 +71,11 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Web - needed for HTTP upgrade handshake -->
+        <!-- log4j-core y log4j-slf4j2-impl obtained from spring-boot -->
+        <!-- hibernate-core y hibernate-validator obtained from spring-boot -->
+        <!-- HikariCP obtained from spring-boot -->
+        <!-- jackson-databind obtained from spring-boot -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -71,11 +86,21 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!-- WebSocket + STOMP -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- Security -->
@@ -83,8 +108,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-
-        <!-- Actuator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -94,13 +117,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-
-        <!-- SpringDoc - documents the HTTP handshake endpoint -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${spring-doc.version}</version>
         </dependency>
 
         <!-- JWT - token validation -->
@@ -140,6 +156,57 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+        <!-- Jsoup -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
+
+        <!-- Dependencia commons-io para leer, escribir y modificar archivos y carpetas (FileUtils.)-->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+
+        <!-- Dependencia poi para leer, escribir y modificar archivos Microsoft Office (.xls, .doc, .ppt) -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache-poi.version}</version>
+        </dependency>
+        <!-- Dependencia poi-ooxml aumenta la covertura de poi para archivos Microsoft Office (.xlsx, .docx) -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache-poi.version}</version>
+        </dependency>
+
+        <!-- Dependencia jackcess para leer, escribir y modificar archivos Access (.accdb)-->
+        <dependency>
+            <groupId>com.healthmarketscience.jackcess</groupId>
+            <artifactId>jackcess</artifactId>
+            <version>${jackcess.version}</version>
+        </dependency>
+
+        <!-- Dependencia pdfbox para leer, escribir y modificar archivos pdf (.pdf)-->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
         </dependency>
     </dependencies>
 

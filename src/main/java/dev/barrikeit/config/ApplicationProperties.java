@@ -61,4 +61,26 @@ public class ApplicationProperties {
       }
     }
   }
+
+  @Getter
+  @Setter
+  @ConfigurationProperties(prefix = "mail", ignoreUnknownFields = false)
+  public static class MailProperties {
+    private String host;
+    private int port;
+    private String user;
+    private String pass;
+    private String from;
+    private String activacionUrl;
+    private Properties properties;
+
+    @Getter
+    @Setter
+    public static class Properties {
+      private String protocol;
+      private String auth;
+      private String starttls;
+      private String debug;
+    }
+  }
 }

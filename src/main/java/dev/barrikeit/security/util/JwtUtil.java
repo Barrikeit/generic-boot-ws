@@ -1,7 +1,6 @@
 package dev.barrikeit.security.util;
 
 import dev.barrikeit.security.config.SecurityProperties;
-import dev.barrikeit.security.model.domain.BasicUserDetails;
 import dev.barrikeit.util.TimeUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -29,33 +28,6 @@ public class JwtUtil {
     this.issuer = jwt.getIssuer();
     this.accessTokenExpirationSec = jwt.getExpiration();
     this.refreshTokenExpirationSec = jwt.getExpirationRefresh();
-  }
-
-  private String buildToken(
-      BasicUserDetails userDetails, String jti, long expirationSeconds, boolean refreshable) {
-    Instant now = TimeUtil.instantNow();
-    return Jwts.builder()
-        .id(jti)
-        .subject(userDetails.getUsername())
-        .issuer(issuer)
-        .issuedAt(Date.from(now))
-        .expiration(Date.from(now.plusSeconds(expirationSeconds)))
-        .claim(JwtConstants.USER_CODE, userDetails.getCode())
-        .claim(JwtConstants.ROLES, userDetails.getRolesNames())
-        .claim(JwtConstants.AUTHORITIES, userDetails.getAuthorityNames())
-        .claim(JwtConstants.REFRESHABLE, refreshable)
-        .signWith(secretKey)
-        .compact();
-  }
-
-  /** Generate access token */
-  public String generateAccessToken(BasicUserDetails userDetails, String jti) {
-    return buildToken(userDetails, jti, accessTokenExpirationSec, false);
-  }
-
-  /** Generate refresh token */
-  public String generateRefreshToken(BasicUserDetails userDetails, String jti) {
-    return buildToken(userDetails, jti, refreshTokenExpirationSec, true);
   }
 
   /** Parse token claims */
