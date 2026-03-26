@@ -2,10 +2,14 @@ package dev.barrikeit.model.domain;
 
 import dev.barrikeit.model.domain.base.GenericCodeEntity;
 import dev.barrikeit.util.constants.EntityConstants;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.io.Serial;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -22,18 +26,11 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @Entity
 @Table(name = EntityConstants.ROLES)
-@AttributeOverride(
-    name = EntityConstants.ID,
-    column = @Column(name = EntityConstants.ID_ROLE, nullable = false))
-@AttributeOverride(
-    name = EntityConstants.CODE,
-    column = @Column(name = EntityConstants.CODE_ROLE, length = 2, nullable = false, unique = true))
-public class Role extends GenericCodeEntity<Integer, String> {
-  @Serial private static final long serialVersionUID = 1L;
+public class Role extends GenericCodeEntity<Long, String> {
 
   @NotNull
   @Size(max = 50)
-  @Column(name = "role", length = 50, nullable = false)
+  @Column(name = EntityConstants.NAME, length = 50, nullable = false)
   private String name;
 
   @ManyToMany

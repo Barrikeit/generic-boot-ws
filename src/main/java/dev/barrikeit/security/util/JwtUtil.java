@@ -1,11 +1,9 @@
 package dev.barrikeit.security.util;
 
 import dev.barrikeit.security.config.SecurityProperties;
-import dev.barrikeit.util.TimeUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -48,8 +46,8 @@ public class JwtUtil {
     return parseToken(token).getSubject();
   }
 
-  public UUID extractUserCode(String token) {
-    return UUID.fromString(parseToken(token).get(JwtConstants.USER_CODE, String.class));
+  public UUID extractUserId(String token) {
+    return UUID.fromString(parseToken(token).get(JwtConstants.USER, String.class));
   }
 
   public Date extractIssuedDate(String token) {

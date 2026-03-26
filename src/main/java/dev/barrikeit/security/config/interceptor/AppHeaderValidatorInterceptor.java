@@ -13,17 +13,6 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
-/**
- * WS equivalent of the REST app's AppHeaderValidatorFilter.
- *
- * <p>Validates that the custom app-identity header is present on CONNECT. This ensures only trusted
- * clients (with the correct app name header) can connect.
- *
- * <p>Runs BEFORE JwtChannelInterceptor in the channel pipeline. If the app header is invalid, the
- * connection is rejected immediately.
- *
- * <p>Disabled entirely when security.enabled=false.
- */
 @Log4j2
 @Component
 @RequiredArgsConstructor

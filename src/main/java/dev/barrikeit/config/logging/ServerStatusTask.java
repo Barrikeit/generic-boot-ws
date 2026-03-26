@@ -1,11 +1,9 @@
 package dev.barrikeit.config.logging;
 
 import dev.barrikeit.util.TimeUtil;
-import dev.barrikeit.util.constants.UtilConstants;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import lombok.AllArgsConstructor;
@@ -22,9 +20,7 @@ public class ServerStatusTask {
 
   @Scheduled(initialDelay = 15, fixedDelay = 15, timeUnit = TimeUnit.MINUTES)
   public void task() {
-    String currentTime =
-        TimeUtil.localDateTimeNow()
-            .format(DateTimeFormatter.ofPattern(UtilConstants.PATTERN_DATE_TIME_MILLI));
+    String currentTime = TimeUtil.formatOffsetDateTime(TimeUtil.offsetDateTimeNow());
     log.info("Server Status - [UP]: [{}]", currentTime);
   }
 

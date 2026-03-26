@@ -30,16 +30,3 @@ spring:
 logging:
   file:
     path: dist/logs
-
-springdoc:
-  api-docs.path: /public/api-docs
-  packagesToScan: dev.barrikeit.rest
-  show-actuator: false
-  swagger-ui:
-    display-request-duration: true
-    filter: true
-    operations-sorter: method
-    path: /public/swagger-ui
-    use-root-path: true
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json

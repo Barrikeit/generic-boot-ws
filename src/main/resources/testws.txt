@@ -1,80 +1,56 @@
--- upgrading connection to WebSocket --
-url -> http://localhost:9891/generic/api/v1/ws
+NOTAS: pruebas con postman
+nota1: conectarse a la url ws://localhost:9891/generic/api/v1/ws
+nota2: los mensajes no se envían correctamente en texto plano, deben pasarse a binario hexadecimal
+nota3: los siguientes mensajes necesitan tener un carácter NULL en ASCII o 00 en binario, para estos ejemplos se ha representado como [NUL]
+nota4: la linea en blanco entre el carácter NULL y el mensaje IMPORTA
 
--- headers --
-GET /generic/api/v1/ws HTTP/1.1
-Host: localhost:9891
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0
-Accept: */*
-Accept-Language: es-ES
-Accept-Encoding: gzip, deflate, br, zstd
-Sec-WebSocket-Version: 13
-Origin: https://jiangxy.github.io
-Sec-WebSocket-Extensions: permessage-deflate
-Sec-WebSocket-Key: O/kmf5DBHTVV+ntX6UeebA==
-Connection: keep-alive, Upgrade
-Sec-Fetch-Dest: empty
-Sec-Fetch-Mode: websocket
-Sec-Fetch-Site: cross-site
-Pragma: no-cache
-Cache-Control: no-cache
-Upgrade: websocket
-
--- response headers --
-HTTP/1.1 101
-Upgrade: websocket
-Connection: upgrade, keep-alive
-Sec-WebSocket-Accept: vgHfFbDgFFHwV3DtlWqJKM/mUPU=
-Sec-WebSocket-Extensions: permessage-deflate
-Date: Sun, 13 Apr 2025 14:19:28 GMT
-Keep-Alive: timeout=60
-
--- message --
+------------------------------------------------------------------------------------------------------------------------
 CONNECT
 accept-version:1.1,1.0
 heart-beat:10000,10000
+Authorization:Bearer {{authToken}}
+app-called-service:generic-ws
 
 [NUL]
-
--- response --
-CONNECTED
-version:1.1
-heart-beat:0,0
-
-
-[NUL]
-
 ------------------------------------------------------------------------------------------------------------------------
--- subscribe --
 SUBSCRIBE
 id:sub-0
+destination:/topic/hello
+
+[NUL]
+------------------------------------------------------------------------------------------------------------------------
+SEND
+destination:/app/hello
+
+{"name":"barrikeit"}
+
+[NUL]
+------------------------------------------------------------------------------------------------------------------------
+SUBSCRIBE
+id:sub-1
 destination:/topic/users
 
 [NUL]
-
--- subscribe --
+------------------------------------------------------------------------------------------------------------------------
 SUBSCRIBE
 id:sub-1
 destination:/topic/rooms
 
 [NUL]
-
 ------------------------------------------------------------------------------------------------------------------------
--- send --
 SEND
 destination:/chess/user/connect
 content-length:20
 
-{"user":"barrikeit"}[NUL]
+{"user":"barrikeit"}
 
--- send --
+[NUL]
+------------------------------------------------------------------------------------------------------------------------
 SEND
 destination:/chess/user/connect
 
 [NUL]
-
 ------------------------------------------------------------------------------------------------------------------------
--- disconnect --
 DISCONNECT
 
 [NUL]

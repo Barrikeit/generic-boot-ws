@@ -8,6 +8,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessagingException;
@@ -20,20 +21,6 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-/**
- * STEP 3 — JWT validation on the STOMP CONNECT frame.
- *
- * <p>This is the WS equivalent of the REST app's JwtFilter. It runs only once per connection (on
- * CONNECT), not on every message. After a successful CONNECT, the authenticated principal is stored
- * in the STOMP session and is available in every @MessageMapping via Principal.
- *
- * <p>Validation chain (same as REST app's JwtFilter): 1. Extract Bearer token from the STOMP
- * Authorization header 2. Parse and verify JWT signature + issuer (JwtUtil.parseToken throws on
- * failure) 3. Check the jti exists in user_sessions (DB revocation check) 4. Attach
- * UsernamePasswordAuthenticationToken as the STOMP session principal
- *
- * <p>Disabled entirely when security.enabled=false (local dev mode).
- */
 @Log4j2
 @Component
 @RequiredArgsConstructor
@@ -63,21 +50,16 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
     }
 
     try {
-      // Step A: parse + verify signature and issuer
       String username = jwtUtil.extractUsername(jwt);
-
-      // Step B: DB revocation check — same as REST app's validateActiveSession()
       validateActiveSession(jwt);
 
-      // Step C: build authentication and attach to the STOMP session
       UsernamePasswordAuthenticationToken auth =
           new UsernamePasswordAuthenticationToken(username, null, jwtUtil.extractAuthorities(jwt));
       auth.setDetails(jwt);
 
-      accessor.setUser(auth); // principal now available in @MessageMapping via Principal
-
+      // principal now available in @MessageMapping via Principal
+      accessor.setUser(auth);
       log.debug("STOMP CONNECT accepted — user: {}", username);
-
     } catch (ExpiredJwtException e) {
       log.warn("STOMP CONNECT rejected — JWT expired");
       throw new MessagingException("JWT Token expirado");
@@ -92,24 +74,16 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
     return message;
   }
 
-  /**
-   * Checks that the jti still exists in the user_sessions table. A missing row means the REST app
-   * revoked this token.
-   */
   private void validateActiveSession(String jwt) {
-    UUID userCode = jwtUtil.extractUserCode(jwt);
+    UUID userId = jwtUtil.extractUserId(jwt);
     String jti = jwtUtil.extractJti(jwt);
-    if (!userSessionService.validateToken(userCode, jti)) {
+    if (!userSessionService.validateToken(userId, jti)) {
       throw new SessionAuthenticationException("Sesión no válida");
     }
   }
 
-  /**
-   * Extracts the raw JWT from the STOMP Authorization header. Clients must send: Authorization:
-   * Bearer <token>
-   */
   private String extractToken(StompHeaderAccessor accessor) {
-    String header = accessor.getFirstNativeHeader("Authorization");
+    String header = accessor.getFirstNativeHeader(HttpHeaders.AUTHORIZATION);
     return (StringUtils.hasText(header) && header.startsWith("Bearer "))
         ? header.substring(7)
         : null;
