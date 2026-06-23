@@ -78,15 +78,15 @@ public class SecurityConfiguration {
         .csrf(AbstractHttpConfigurer::disable)
         .headers(
             headers ->
-                headers.frameOptions(
-                    options ->
-                        options
-                            .sameOrigin()
-                            .addHeaderWriter(
-                                new StaticHeadersWriter(
-                                    "X-Content-Security-Policy", "default-src 'self'"))
-                            .addHeaderWriter(
-                                new StaticHeadersWriter("X-WebKit-CSP", "default-src 'self'"))))
+                headers
+                    .frameOptions(options -> options.sameOrigin())
+                    .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
+                    .addHeaderWriter(
+                        new StaticHeadersWriter("Referrer-Policy", "strict-origin-when-cross-origin"))
+                    .addHeaderWriter(
+                        new StaticHeadersWriter("Permissions-Policy", "camera=(), microphone=(), geolocation=()"))
+                    .addHeaderWriter(
+                        new StaticHeadersWriter("Cross-Origin-Opener-Policy", "same-origin")))
         .sessionManagement(
             sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -120,15 +120,21 @@ public class SecurityConfiguration {
     SecurityProperties.CorsProperties cors = securityProperties.getCors();
 
     if (Boolean.TRUE.equals(cors.getEnabled())) {
-      configuration.setAllowedOriginPatterns(
-          Arrays.asList(cors.getAllowed().getOrigins().split(",")));
-      configuration.setAllowedMethods(Arrays.asList(cors.getAllowed().getMethods().split(",")));
-      configuration.setAllowedHeaders(Arrays.asList(cors.getAllowed().getHeaders().split(",")));
+      configuration.setAllowedOriginPatterns(splitTrimmed(cors.getAllowed().getOrigins()));
+      configuration.setAllowedMethods(splitTrimmed(cors.getAllowed().getMethods()));
+      configuration.setAllowedHeaders(splitTrimmed(cors.getAllowed().getHeaders()));
       configuration.setAllowCredentials(true);
     }
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration(cors.getPath().getPattern(), configuration);
     return source;
+  }
+
+  private static java.util.List<String> splitTrimmed(String csv) {
+    return Arrays.stream(csv.split(","))
+        .map(String::trim)
+        .filter(s -> !s.isEmpty())
+        .toList();
   }
 }
